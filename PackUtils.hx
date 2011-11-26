@@ -831,7 +831,7 @@ class PackUtils
 
                 if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_SHAPE))) != 0 )
                 {
-            wps.dc.shaping_acc[0] += wps.dc.shaping_delta[0];
+                    wps.dc.shaping_acc[0] += wps.dc.shaping_delta[0];
                     var shaping_weight:Int= (wps.dc.shaping_acc[0] ) >> 16;
                     temp = -apply_weight(shaping_weight, wps.dc.error[0]);
 
@@ -1188,14 +1188,14 @@ class PackUtils
         return i;
     }
 
-    static function apply_weight(weight:Int, sample:Int):Int 
+    static inline function apply_weight(weight:Int, sample:Int):Int 
     {
         //return ((((weight *  sample) + 512) >> 10));
         return(((((sample & 0xffff) * weight) >> 9) + (((sample & ~0xffff) >>9) * weight) + 1) >> 1);
 
     }
 
-    static function update_weight(weight:Int, delta:Int, source:Int, result:Int):Int 
+    static inline function update_weight(weight:Int, delta:Int, source:Int, result:Int):Int 
     {
         if ((source != 0) && (result != 0))
         {
@@ -1205,7 +1205,7 @@ class PackUtils
         return weight;
     }
 
-    static function update_weight_clip(weight:Int, delta:Int, source:Int, result:Int):Int {
+    static inline function update_weight_clip(weight:Int, delta:Int, source:Int, result:Int):Int {
         if ((source != 0) && (result != 0) &&
                 (((source ^ result) < 0) ? ((weight -= delta) < -1024) : ((weight += delta) > 1024)))
         {
