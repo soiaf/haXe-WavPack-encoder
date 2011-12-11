@@ -605,43 +605,46 @@ class WordsUtils
             update_error_limit(wps);
         }
 
-        if (value < GET_MED(wps, 0, chan))
+        var getmed0 : Int = GET_MED(wps, 0, chan);
+        if (value < getmed0)
         {
             ones_count = low = 0;
 
-            high = GET_MED(wps, 0, chan) - 1;
+            high = getmed0 - 1;
             wps = DEC_MED0(wps, chan);
         }
         else
         {
-            low = GET_MED(wps, 0, chan);
+            low = getmed0;
             wps = INC_MED0(wps, chan);
+            var getmed1 : Int = GET_MED(wps, 1, chan);
 
-            if ((value - low) < GET_MED(wps, 1, chan))
+            if ((value - low) < getmed1)
             {
                 ones_count = 1;
 
-                high = (low + GET_MED(wps, 1, chan)) - 1;
+                high = (low + getmed1) - 1;
                 wps = DEC_MED1(wps, chan);
             }
             else
             {
-                low += GET_MED(wps, 1, chan);
+                low += getmed1;
                 wps = INC_MED1(wps, chan);
+                var getmed2 : Int = GET_MED(wps, 2, chan);
 
-                if ((value - low) < GET_MED(wps, 2, chan))
+                if ((value - low) < getmed2)
                 {
                     ones_count = 2;
 
-                    high = (low + GET_MED(wps, 2, chan)) - 1;
+                    high = (low + getmed2) - 1;
                     wps = DEC_MED2(wps, chan);
                 }
                 else
                 {
-                    ones_count = 2+ Math.floor((value - low) / GET_MED(wps, 2, chan));
-                    low += ((ones_count - 2) * GET_MED(wps, 2, chan));
+                    ones_count = 2+ Math.floor((value - low) / getmed2);
+                    low += ((ones_count - 2) * getmed2);
 
-                    high = (low + GET_MED(wps, 2, chan)) - 1;
+                    high = (low + getmed2) - 1;
                     wps = INC_MED2(wps, chan);
                 }
             }
@@ -810,39 +813,42 @@ class WordsUtils
             value = haxe.Int32.toInt(haxe.Int32.complement(haxe.Int32.ofInt(value)));
         }
 
-        if (value < GET_MED(wps, 0, chan))
+        var getmed0 : Int = GET_MED(wps, 0, chan);
+        if (value < getmed0)
         {
             ones_count = low = 0;
-            high = GET_MED(wps, 0, chan) - 1;
+            high = getmed0 - 1;
             wps = DEC_MED0(wps, chan);
         }
         else
         {
-            low = GET_MED(wps, 0, chan);
+            low = getmed0;
             wps = INC_MED0(wps, chan);
+            var getmed1 : Int = GET_MED(wps, 1, chan);
 
-            if ((value - low) < GET_MED(wps, 1, chan))
+            if ((value - low) < getmed1)
             {
                 ones_count = 1;
-                high = (low + GET_MED(wps, 1, chan)) - 1;
+                high = (low + getmed1) - 1;
                 wps = DEC_MED1(wps, chan);
             }
             else
             {
-                low += GET_MED(wps, 1, chan);
+                low += getmed1;
                 wps = INC_MED1(wps, chan);
+                var getmed2 : Int = GET_MED(wps, 2, chan);
 
-                if ((value - low) < GET_MED(wps, 2, chan))
+                if ((value - low) < getmed2)
                 {
                     ones_count = 2;
-                    high = (low + GET_MED(wps, 2, chan)) - 1;
+                    high = (low + getmed2) - 1;
                     wps = DEC_MED2(wps, chan);
                 }
                 else
                 {
-                    ones_count = 2+ Math.floor((value - low) / GET_MED(wps, 2, chan));
-                    low += ((ones_count - 2) * GET_MED(wps, 2, chan));
-                    high = (low + GET_MED(wps, 2, chan)) - 1;
+                    ones_count = 2+ Math.floor((value - low) / getmed2);
+                    low += ((ones_count - 2) * getmed2);
+                    high = (low + getmed2) - 1;
                     wps = INC_MED2(wps, chan);
                 }
             }
