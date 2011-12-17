@@ -1246,13 +1246,21 @@ class PackUtils
         if (m != 0)
         {
             tcount = wps.num_terms;
-               while (tcount > 0)
+            while (tcount > 0)
             {
                 if ((wps.decorr_passes[dpp_idx].term > 0) &&
                         (wps.decorr_passes[dpp_idx].term <= Defines.MAX_TERM))
                 {
+#if flash10				
+                    var temp_A: flash.Vector < Int > = new flash.Vector(wps.decorr_passes[dpp_idx].samples_A.length,true);
+					var temp_B: flash.Vector < Int > = new flash.Vector(wps.decorr_passes[dpp_idx].samples_B.length,true);		
+#else				
                     var temp_A:Array<Int>= new Array();
-                    var temp_B:Array<Int>= new Array();
+                    var temp_B:Array<Int>= new Array();				
+					temp_A[wps.decorr_passes[dpp_idx].samples_A.length] = 0;	// presize array
+					temp_B[wps.decorr_passes[dpp_idx].samples_B.length] = 0;	// presize array
+#end
+					
                     var k:Int;
 
                     for ( t in 0 ... wps.decorr_passes[dpp_idx].samples_A.length )

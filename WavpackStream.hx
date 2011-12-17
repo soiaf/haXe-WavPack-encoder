@@ -16,9 +16,14 @@ class WavpackStream
     public var wvcbits:Bitstream;
     public var dc:DeltaData;
     public var w:WordsData;
+#if flash10
+    public var blockbuff: flash.Vector < Int >;
+	public var block2buff: flash.Vector < Int >;
+#else	
     public var blockbuff:Array<Int>;
+	public var block2buff:Array<Int>;
+#end	
     public var blockend:Int;
-    public var block2buff:Array<Int>;
     public var block2end:Int;
     public var bits:Int;
     public var lossy_block:Int;
@@ -44,8 +49,15 @@ class WavpackStream
 
     public function new()
     {
+#if flash10
+        blockbuff = new flash.Vector((Defines.BIT_BUFFER_SIZE + 1),true);
+        block2buff = new flash.Vector((Defines.BIT_BUFFER_SIZE + 1),true);
+#else	
         blockbuff = new Array();
         block2buff = new Array();
+		blockbuff[Defines.BIT_BUFFER_SIZE + 1] = 0;     // presize array
+		block2buff[Defines.BIT_BUFFER_SIZE + 1] = 0;     // presize array
+#end		
         blockend = Defines.BIT_BUFFER_SIZE;
         block2end = Defines.BIT_BUFFER_SIZE;
         wphdr = new WavpackHeader();

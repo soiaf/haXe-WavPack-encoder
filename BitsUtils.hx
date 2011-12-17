@@ -34,10 +34,9 @@ class BitsUtils
 
     // This function calculates the approximate number of bytes remaining in the
     // bitstream buffer and can be used as an early-warning of an impending overflow.
-    public static function bs_remain_write(bs:Bitstream):Float {
-        var bytes_written:Float;
+    public static function bs_remain_write(bs:Bitstream):Int {
 
-        if (bs.error > 0)
+        if (bs.error != 0)
         {
             return -1;
         }
