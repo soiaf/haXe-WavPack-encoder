@@ -1376,7 +1376,12 @@ class PackUtils
     // called next with actual sample data. To find out how much data was written
     // the caller must look at the ckSize field of the written WavpackHeader, NOT
     // the one in the WavpackStream. A return value of FALSE indicates an error.
+	
+#if flash10
+	static function copy_metadata(wpmd:WavpackMetadata, buffer_start:flash.Vector<Int>, buffer_end:Int):Int {
+#else	
     static function copy_metadata(wpmd:WavpackMetadata, buffer_start:Array<Int>, buffer_end:Int):Int {
+#end	
         var mdsize:Int= wpmd.byte_length + (wpmd.byte_length & 1);
         var chunkSize:Int;
         var bufIdx:Int= 0;

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //                   haXe Implementation of WavPack Encoder               //
-//                     Copyright (c) 2011 Peter McQuillan                 //
+//                   Copyright (c) 2011-2012 Peter McQuillan              //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////

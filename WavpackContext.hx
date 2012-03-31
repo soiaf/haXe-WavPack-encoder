@@ -15,8 +15,14 @@ class WavpackContext
     public var stream:WavpackStream;
     public var error_message:String;
     public var infile:haxe.io.Input;
-    public var outfile:haxe.io.Output;
-    public var correction_outfile:haxe.io.Output;
+#if flash10
+	public var outfile:flash.utils.ByteArray;
+	public var correction_outfile:flash.utils.ByteArray;
+#else	
+	public var outfile:haxe.io.Output;
+	public var correction_outfile:haxe.io.Output;
+#end
+
     public var total_samples:Int; // was uint32_t in C
     public var lossy_blocks:Int;
     public var wvc_flag:Int;

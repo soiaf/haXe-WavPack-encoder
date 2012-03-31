@@ -323,12 +323,20 @@ class WavPackUtils
 
         try
         {
+#if flash10
+            for(i in 0 ... bcount)
+            {
+				wpc.outfile.writeByte(wps.blockbuff[i]);
+            }
+#else
             var blockbuffAsBytes = haxe.io.Bytes.alloc(bcount);
             for(i in 0 ... bcount)
             {
                 blockbuffAsBytes.set(i,wps.blockbuff[i]);
             }
-            wpc.outfile.writeBytes(blockbuffAsBytes, 0, bcount);
+			
+			wpc.outfile.writeBytes(blockbuffAsBytes, 0, bcount);
+#end	
         }
         catch (err: Dynamic)
         {
@@ -350,12 +358,19 @@ class WavPackUtils
 
             try
             {
+#if flash10
+				for(i in 0 ... bcount)
+				{
+					wpc.correction_outfile.writeByte(wps.blockbuff[i]);
+				}
+#else			
                 var block2buffAsBytes = haxe.io.Bytes.alloc(bcount);
                 for(i in 0 ... bcount)
                 {
                     block2buffAsBytes.set(i,wps.block2buff[i]);
                 } 
                 wpc.correction_outfile.writeBytes(block2buffAsBytes, 0, bcount);
+#end				
             }
             catch (err: Dynamic)
             {
