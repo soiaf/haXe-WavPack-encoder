@@ -1,7 +1,7 @@
 /*
 ** WvEncode.hx
 **
-** Copyright (c) 2011 Peter McQuillan
+** Copyright (c) 2011-2012 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -27,9 +27,9 @@ class WvEncode
         var VERSION_STR:String= "4.40";
         var DATE_STR:String= "2007-01-16";
 
-        var sign_on1:String= "haXe WavPack Encoder (c) 2011 Peter McQuillan";
+        var sign_on1:String= "Haxe WavPack Encoder (c) 2011-2012 Peter McQuillan";
         var sign_on2:String= "based on TINYPACK - Tiny Audio Compressor  Version " + VERSION_STR +
-            " " + DATE_STR + " Copyright (c) 1998 - 2011 Conifer Software.  All Rights Reserved.";
+            " " + DATE_STR + " Copyright (c) 1998 - 2012 Conifer Software.  All Rights Reserved.";
 
         var usage0:String= "";
         var usage1:String= " Usage:   neko wavpack.n [-options] infile.wav outfile.wv [outfile.wvc]";

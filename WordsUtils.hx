@@ -1,7 +1,7 @@
 /*
 ** WordsUtils.hx
 **
-** Copyright (c) 2011 Peter McQuillan
+** Copyright (c) 2011-2012 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -25,21 +25,40 @@ class WordsUtils
     static var DIV2:Int= 32; // 20/343 of samples
 
     ///////////////////////////// local table storage ////////////////////////////
-    static var bitset:Array < Int >= 
+
+    static var bignumtmp1: Int = 0x20000000;
+    static var bignumtmp2: haxe.Int32 = haxe.Int32.ofInt(bignumtmp1);
+    static var bignumtmp3: haxe.Int32 = haxe.Int32.shl(bignumtmp2,1);   // 0x40000000
+    static var bignumtmp4: haxe.Int32 = haxe.Int32.shl(bignumtmp2,2);   // 0x80000000
+
+
+    static var bitset:Array < haxe.Int32 > = 
+    [       haxe.Int32.ofInt(1), haxe.Int32.ofInt(2), haxe.Int32.ofInt(4), haxe.Int32.ofInt(8),
+            haxe.Int32.ofInt(16), haxe.Int32.ofInt(32), haxe.Int32.ofInt(64), haxe.Int32.ofInt(128),
+            haxe.Int32.ofInt(1<< 8), haxe.Int32.ofInt(1<< 9), haxe.Int32.ofInt(1<< 10), haxe.Int32.ofInt(1<< 11),
+            haxe.Int32.ofInt(1<< 12), haxe.Int32.ofInt(1<< 13), haxe.Int32.ofInt(1<< 14), haxe.Int32.ofInt(1<< 15),
+            haxe.Int32.ofInt(1<< 16), haxe.Int32.ofInt(1<< 17), haxe.Int32.ofInt(1<< 18), haxe.Int32.ofInt(1<< 19),
+            haxe.Int32.ofInt(1<< 20), haxe.Int32.ofInt(1<< 21), haxe.Int32.ofInt(1<< 22), haxe.Int32.ofInt(1<< 23),
+            haxe.Int32.ofInt(1<< 24), haxe.Int32.ofInt(1<< 25), haxe.Int32.ofInt(1<< 26), haxe.Int32.ofInt(1<< 27),
+            haxe.Int32.ofInt(1<< 28), haxe.Int32.ofInt(1<< 29), bignumtmp3, bignumtmp4];
+
+    static var bitmasktmp: haxe.Int32 = haxe.Int32.sub(bignumtmp4 , haxe.Int32.ofInt(1));
+
+    static var bitmask:Array < haxe.Int32 >= 
         [
-            1<< 0, 1<< 1, 1<< 2, 1<< 3, 1<< 4, 1<< 5, 1<< 6, 1<< 7, 1<< 8, 1<< 9,
-            1<< 10, 1<< 11, 1<< 12, 1<< 13, 1<< 14, 1<< 15, 1<< 16, 1<< 17, 1<< 18,
-            1<< 19, 1<< 20, 1<< 21, 1<< 22, 1<< 23, 1<< 24, 1<< 25, 1<< 26, 1<< 27,
-            1<< 28, 1<< 29, 1<< 30, 1<< 31];
-    static var bitmask:Array < Int >= 
-        [
-            (1<< 0) - 1, (1<< 1) - 1, (1<< 2) - 1, (1<< 3) - 1, (1<< 4) - 1, (1<< 5) -
-            1, (1<< 6) - 1, (1<< 7) - 1, (1<< 8) - 1, (1<< 9) - 1, (1<< 10) - 1,
-            (1<< 11) - 1, (1<< 12) - 1, (1<< 13) - 1, (1<< 14) - 1, (1<< 15) - 1,
-            (1<< 16) - 1, (1<< 17) - 1, (1<< 18) - 1, (1<< 19) - 1, (1<< 20) - 1,
-            (1<< 21) - 1, (1<< 22) - 1, (1<< 23) - 1, (1<< 24) - 1, (1<< 25) - 1,
-            (1<< 26) - 1, (1<< 27) - 1, (1<< 28) - 1, (1<< 29) - 1, (1<< 30) - 1,
-            0x7fffffff];
+            haxe.Int32.ofInt((1<< 0) - 1), haxe.Int32.ofInt((1<< 1) - 1), haxe.Int32.ofInt((1<< 2) - 1),
+            haxe.Int32.ofInt((1<< 3) - 1), haxe.Int32.ofInt((1<< 4) - 1), haxe.Int32.ofInt((1<< 5) - 1),
+            haxe.Int32.ofInt((1<< 6) - 1), haxe.Int32.ofInt((1<< 7) - 1), haxe.Int32.ofInt((1<< 8) - 1), 
+            haxe.Int32.ofInt((1<< 9) - 1), haxe.Int32.ofInt((1<< 10) - 1), haxe.Int32.ofInt((1<< 11) - 1),
+            haxe.Int32.ofInt((1<< 12) - 1), haxe.Int32.ofInt((1<< 13) - 1), haxe.Int32.ofInt((1<< 14) - 1),
+            haxe.Int32.ofInt((1<< 15) - 1), haxe.Int32.ofInt((1<< 16) - 1), haxe.Int32.ofInt((1<< 17) - 1), 
+            haxe.Int32.ofInt((1<< 18) - 1), haxe.Int32.ofInt((1<< 19) - 1), haxe.Int32.ofInt((1<< 20) - 1),
+            haxe.Int32.ofInt((1<< 21) - 1), haxe.Int32.ofInt((1<< 22) - 1), haxe.Int32.ofInt((1<< 23) - 1), 
+            haxe.Int32.ofInt((1<< 24) - 1), haxe.Int32.ofInt((1<< 25) - 1), haxe.Int32.ofInt((1<< 26) - 1),
+            haxe.Int32.ofInt((1<< 27) - 1), haxe.Int32.ofInt((1<< 28) - 1), haxe.Int32.ofInt((1<< 29) - 1),
+            haxe.Int32.ofInt((1<< 30) - 1), bitmasktmp];
+
+
     static var nbits_table:Array < Int >= 
         [
             0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, // 0 - 15
@@ -206,7 +225,7 @@ class WordsUtils
         {
             bitrate_0 = (wps.bits < 568) ? 0: (wps.bits - 568);
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
             {
                 if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.HYBRID_BALANCE))) != 0 )
                 {
@@ -267,7 +286,7 @@ class WordsUtils
         byteptr[byte_idx] = ((temp >> 8));
         byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
         {
             byteptr[byte_idx] = ((temp = mylog2(wps.w.median[0][1])));
             byte_idx++;
@@ -314,7 +333,7 @@ class WordsUtils
             byteptr[byte_idx] = ((temp >> 8));
             byte_idx++;
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
             {
                 temp = log2s(((wps.w.slow_level[1])));
                 byteptr[byte_idx] = (temp);
@@ -330,7 +349,7 @@ class WordsUtils
         byteptr[byte_idx] = ((temp >> 8));
         byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
         {
             temp = ((wps.w.bitrate_acc[1] >> 16));
             byteptr[byte_idx] = (temp);
@@ -347,7 +366,7 @@ class WordsUtils
             byteptr[byte_idx] = ((temp >> 8));
             byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
             {
                 temp = log2s(((wps.w.bitrate_delta[1])));
                 byteptr[byte_idx] = (temp);
@@ -369,7 +388,7 @@ class WordsUtils
         var byteptr:Array<Dynamic>= wpmd.data;
         var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
-        if (wpmd.byte_length != ( (haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) != 0 )
+        if (wpmd.byte_length != ( (haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 )
                 ? 6: 12))
         {
             return Defines.FALSE;
@@ -379,7 +398,7 @@ class WordsUtils
         wps.w.median[1][0] = exp2s((byteptr[2] & 0xff) + ((byteptr[3] & 0xff) << 8));
         wps.w.median[2][0] = exp2s((byteptr[4] & 0xff) + ((byteptr[5] & 0xff) << 8));
 
-        if (haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if (haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
         {
             wps.w.median[0][1] = exp2s((byteptr[6] & 0xff) + ((byteptr[7] & 0xff) << 8));
             wps.w.median[1][1] = exp2s((byteptr[8] & 0xff) + ((byteptr[9] & 0xff) << 8));
@@ -405,7 +424,7 @@ class WordsUtils
                     ((byteptr[byte_idx + 1] & 0xff) << 8));
             byte_idx += 2;
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
             {
                 wps.w.slow_level[1] = exp2s((byteptr[byte_idx] & 0xff) +
                         ((byteptr[byte_idx + 1] & 0xff) << 8));
@@ -417,7 +436,7 @@ class WordsUtils
             ((byteptr[byte_idx + 1] & 0xff) << 8)) )<< 16;
         byte_idx += 2;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
         {
             wps.w.bitrate_acc[1] = (((byteptr[byte_idx] & 0xff) +
                 ((byteptr[byte_idx + 1] & 0xff) << 8)) )<< 16;
@@ -430,7 +449,7 @@ class WordsUtils
                     ((byteptr[byte_idx + 1] & 0xff) << 8))));
             byte_idx += 2;
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
             {
                 wps.w.bitrate_delta[1] = exp2s((((byteptr[byte_idx] & 0xff) +
                         ((byteptr[byte_idx + 1] & 0xff) << 8))));
@@ -465,7 +484,7 @@ class WordsUtils
         var bitrate_0:Int= wps.w.bitrate_acc[0] >> 16;
         var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) != 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 )
         {
             if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.HYBRID_BITRATE))) != 0 )
             {
@@ -685,7 +704,7 @@ class WordsUtils
                 var maxcode:Int= high - low;
                 var code:Int= value - low;
                 var bitcount:Int= count_bits(maxcode);
-                var extras:Int= bitset[bitcount] - maxcode - 1;
+                var extras:Int= haxe.Int32.toInt(bitset[bitcount]) - maxcode - 1;
 
                 if (code < extras)
                 {
@@ -714,7 +733,7 @@ class WordsUtils
                 else
                 {
                     mid = (high + (low = mid) + 1) >> 1;
-                    wps.w.pend_data |= bitset[wps.w.pend_count++];
+                    wps.w.pend_data |= haxe.Int32.toInt(bitset[wps.w.pend_count++]);
                 }
             }
         }
@@ -732,7 +751,7 @@ class WordsUtils
             var code:Int= value - low;
             var maxcode:Int= high - low;
             var bitcount:Int= count_bits(maxcode);
-            var extras:Int= bitset[bitcount] - maxcode - 1;
+            var extras:Int= haxe.Int32.toInt(bitset[bitcount]) - maxcode - 1;
 
             if (bitcount != 0)
             {
@@ -885,7 +904,7 @@ class WordsUtils
             var maxcode:Int= high - low;
             var code:Int= value - low;
             var bitcount:Int= count_bits(maxcode);
-            var extras:Int= bitset[bitcount] - maxcode - 1;
+            var extras:Int= haxe.Int32.toInt(bitset[bitcount]) - maxcode - 1;
 
             if (code < extras)
             {
@@ -1121,7 +1140,7 @@ class WordsUtils
             }
             else
             {
-                putbits(bitmask[((wps.w.holding_one))], wps.w.holding_one, wps);
+                putbits(haxe.Int32.toInt(bitmask[((wps.w.holding_one))]), wps.w.holding_one, wps);
             }
 
             wps.w.holding_one = 0;

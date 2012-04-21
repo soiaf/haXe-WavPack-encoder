@@ -1,15 +1,16 @@
 ////////////////////////////////////////////////////////////////////////////
-//                   haXe Implementation of WavPack Encoder               //
+//                   Haxe Implementation of WavPack Encoder               //
 //                   Copyright (c) 2011-2012 Peter McQuillan              //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
 
-This package contains a haXe implementation of the tiny version of the WavPack 
+This package contains a Haxe implementation of the tiny version of the WavPack 
 4.40 encoder. It is packaged with 2 demo command-line programs that accept a
 RIFF wav file as input and output a WavPack encoded file.
 One demo command-line program is designed to run with Neko, the
 other uses your C++ compiler to produce a native executable.
+This code has been tested against Haxe 2.09
 
 ===
 To compile the .hx files for use with Neko, use the following command

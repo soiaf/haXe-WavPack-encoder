@@ -1,7 +1,7 @@
 /*
 ** PackUtils.hx
 **
-** Copyright (c) 2011 Peter McQuillan
+** Copyright (c) 2011-2012 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -129,7 +129,7 @@ class PackUtils
         while (i >= 0)
         {
             if ((WordsUtils.store_weight(wps.decorr_passes[i].weight_A) != 0) ||
-                    ((haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 ) &&
+                    ((haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 ) &&
                     (WordsUtils.store_weight(wps.decorr_passes[i].weight_B) != 0)))
             {
                 break;
@@ -147,7 +147,7 @@ class PackUtils
                 wps.decorr_passes[i].weight_A = WordsUtils.restore_weight(byteptr[byte_idx]);
                 byte_idx++;
 
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
                 {
                     byteptr[byte_idx] = WordsUtils.store_weight(wps.decorr_passes[i].weight_B);
                     wps.decorr_passes[i].weight_B = WordsUtils.restore_weight(byteptr[byte_idx]);
@@ -224,7 +224,7 @@ class PackUtils
                     }    
                     byte_idx++;
 
-                    if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+                    if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
                     {
                         wps.decorr_passes[dpp_idx].samples_B[0] = WordsUtils.exp2s(temp = WordsUtils.log2s(
                                         wps.decorr_passes[dpp_idx].samples_B[0]));
@@ -301,7 +301,7 @@ class PackUtils
                         byteptr[byte_idx] = ((temp >> 8));
                         byte_idx++;
 
-                        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+                        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
                         {
                             wps.decorr_passes[dpp_idx].samples_B[m] = WordsUtils.exp2s(temp = WordsUtils.log2s(
                                             wps.decorr_passes[dpp_idx].samples_B[m]));
@@ -367,7 +367,7 @@ class PackUtils
         byteptr[byte_idx] = ((temp >> 8));
         byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
         {
             wps.dc.error[1] = WordsUtils.exp2s(temp = WordsUtils.log2s(wps.dc.error[1]));
             byteptr[byte_idx] = (temp);
@@ -390,7 +390,7 @@ class PackUtils
             byteptr[byte_idx] = ((temp >> 8));
             byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 )
+        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
             {
                 wps.dc.shaping_delta[1] = WordsUtils.exp2s(temp = WordsUtils.log2s(
                                 wps.dc.shaping_delta[1]));
@@ -634,7 +634,7 @@ class PackUtils
         
         /////////////////////// handle lossless mono mode /////////////////////////
         if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) == 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) != 0 ) )
+            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 ) )
         {            
             bptr = buffer;
 
@@ -703,7 +703,7 @@ class PackUtils
 
         //////////////////// handle the lossless stereo mode //////////////////////
         else if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) == 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 ) )
+            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 ) )
         {    
 
             bptr = buffer;    
@@ -811,7 +811,7 @@ class PackUtils
 
         /////////////////// handle the lossy/hybrid mono mode /////////////////////
         else if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) != 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) != 0 ) )
+            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 ) )
         {
             bptr = buffer;
             for (internalCounter in 0...sample_count)
@@ -906,6 +906,7 @@ class PackUtils
 
                         wps.decorr_passes[dpp_idx].samples_A[(m + wps.decorr_passes[dpp_idx].term) &
                         (Defines.MAX_TERM - 1)] = (code += wps.decorr_passes[dpp_idx].aweight_A);
+
                     }
 
                     dpp_idx--;
@@ -928,7 +929,7 @@ class PackUtils
 
         /////////////////// handle the lossy/hybrid stereo mode ///////////////////
         else if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) != 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) == 0 ) )
+            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 ) )
         {
             bptr = buffer;
             for (internalCounter in 0...sample_count)

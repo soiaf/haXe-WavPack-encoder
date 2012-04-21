@@ -226,7 +226,7 @@ class WavPackUtils
             var cnt:Int= sample_count;
             var ptrIndex:Int= 0;
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.MONO_FLAG | Defines.FALSE_STEREO))) != 0 )
+            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 )
             {
                 while (cnt > 0)
                 {
