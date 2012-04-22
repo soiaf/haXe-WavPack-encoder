@@ -1,0 +1,4 @@
+-swf wavpack_encoder_demo.swf
+-swf-version 10
+--no-traces
+-main TestRecorder

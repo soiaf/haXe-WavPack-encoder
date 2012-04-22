@@ -10,6 +10,7 @@ This package contains a Haxe implementation of the tiny version of the WavPack
 RIFF wav file as input and output a WavPack encoded file.
 One demo command-line program is designed to run with Neko, the
 other uses your C++ compiler to produce a native executable.
+There is also a demo Flash WavPack encoder.
 This code has been tested against Haxe 2.09
 
 ===
@@ -32,5 +33,15 @@ Options: -bn = enable hybrid compression, n = 2.0 to 16.0 bits/sample
          -jn = joint-stereo override (0 = left/right, 1 = mid/side)
          -sn = noise shaping override (hybrid only, n = -1.0 to 1.0, 0 = off)
 
+To make the demo Flash file, use the following command
+
+haxe flashtest.hxml
+
+This will produce the file
+
+wavpack_encoder_demo.swf
+
+This demo encodes at 8kHz, lossy. This can be simply modified by changing the values in 
+the new method of MicRecorder.hx 
 
 Please direct any questions or comments to beatofthedrum@gmail.com
