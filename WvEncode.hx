@@ -32,7 +32,7 @@ class WvEncode
             " " + DATE_STR + " Copyright (c) 1998 - 2012 Conifer Software.  All Rights Reserved.";
 
         var usage0:String= "";
-        var usage1:String= " Usage:   neko wavpack.n [-options] infile.wav outfile.wv [outfile.wvc]";
+        var usage1:String= " Usage:   WvEncode [-options] infile.wav outfile.wv [outfile.wvc]";
         var usage2:String= " (default is lossless)";
         var usage3:String= "";
         var usage4:String= "  Options: -bn = enable hybrid compression, n = 2.0 to 16.0 bits/sample";
@@ -60,13 +60,13 @@ class WvEncode
 
 
         // loop through command-line arguments
-        while (arg_idx < neko.Sys.args().length)
+        while (arg_idx < Sys.args().length)
         {
-            if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-"))
+            if (StringTools.startsWith(Sys.args()[arg_idx], "-"))
             {
-                if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-c") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-C") )
+                if (StringTools.startsWith(Sys.args()[arg_idx], "-c") || StringTools.startsWith(Sys.args()[arg_idx], "-C") )
                 {
-                    if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-cc") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-CC"))
+                    if (StringTools.startsWith(Sys.args()[arg_idx], "-cc") || StringTools.startsWith(Sys.args()[arg_idx], "-CC"))
                     {
                         config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC));
                         config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_OPTIMIZE_WVC));
@@ -76,13 +76,13 @@ class WvEncode
                         config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC));
                     }
                 }
-                else if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-f") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-F"))
+                else if (StringTools.startsWith(Sys.args()[arg_idx], "-f") || StringTools.startsWith(Sys.args()[arg_idx], "-F"))
                 {
                     config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_FAST_FLAG));
                 }
-                else if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-h") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-H"))
+                else if (StringTools.startsWith(Sys.args()[arg_idx], "-h") || StringTools.startsWith(Sys.args()[arg_idx], "-H"))
                 {
-                    if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-hh") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-HH"))
+                    if (StringTools.startsWith(Sys.args()[arg_idx], "-hh") || StringTools.startsWith(Sys.args()[arg_idx], "-HH"))
                     {
                         config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_VERY_HIGH_FLAG));
                     }
@@ -91,15 +91,15 @@ class WvEncode
                         config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG));
                     }
                 }
-                else if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-k") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-K"))
+                else if (StringTools.startsWith(Sys.args()[arg_idx], "-k") || StringTools.startsWith(Sys.args()[arg_idx], "-K"))
                 {
                     var passedInt:Int= 0;
 
-                    if (neko.Sys.args()[arg_idx].length > 2)
+                    if (Sys.args()[arg_idx].length > 2)
                     {
                         try
                         {
-                            var substring:String= neko.Sys.args()[arg_idx].substr(2);
+                            var substring:String= Sys.args()[arg_idx].substr(2);
                             passedInt = Std.parseInt(substring);
                         }
                         catch (err: Dynamic)
@@ -112,7 +112,7 @@ class WvEncode
 
                         try
                         {
-                            passedInt = Std.parseInt(neko.Sys.args()[arg_idx]);
+                            passedInt = Std.parseInt(Sys.args()[arg_idx]);
                         }
                         catch (err: Dynamic)
                         {
@@ -121,16 +121,16 @@ class WvEncode
 
                     config.block_samples = passedInt;
                 }
-                else if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-b") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-B"))
+                else if (StringTools.startsWith(Sys.args()[arg_idx], "-b") || StringTools.startsWith(Sys.args()[arg_idx], "-B"))
                 {
                     var passedDouble:Float= 0;
                     config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HYBRID_FLAG));
 
-                    if (neko.Sys.args()[arg_idx].length > 2)    // handle the case where the string is passed in form -b0 (number beside b)
+                    if (Sys.args()[arg_idx].length > 2)    // handle the case where the string is passed in form -b0 (number beside b)
                     {
                         try
                         {
-                            var substring:String= neko.Sys.args()[arg_idx].substr(2);
+                            var substring:String= Sys.args()[arg_idx].substr(2);
                             passedDouble = Std.parseFloat(substring);
                             config.bitrate = Math.floor((passedDouble * 256.0));
                         }
@@ -145,7 +145,7 @@ class WvEncode
 
                         try
                         {
-                            passedDouble = Std.parseFloat(neko.Sys.args()[arg_idx]);
+                            passedDouble = Std.parseFloat(Sys.args()[arg_idx]);
                             config.bitrate = Math.floor((passedDouble * 256.0));
                         }
                         catch (err: Dynamic)
@@ -156,19 +156,19 @@ class WvEncode
 
                     if ((config.bitrate < 512) || (config.bitrate > 4096))
                     {
-                        neko.Lib.println("hybrid spec must be 2.0 to 16.0!");
+                        Sys.println("hybrid spec must be 2.0 to 16.0!");
                         ++error_count;
                     }
                 }
-                else if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-j") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-J"))
+                else if (StringTools.startsWith(Sys.args()[arg_idx], "-j") || StringTools.startsWith(Sys.args()[arg_idx], "-J"))
                 {
                     var passedInt:Int= 2;
 
-                    if (neko.Sys.args()[arg_idx].length > 2) // handle the case where the string is passed in form -j0 (number beside j)
+                    if (Sys.args()[arg_idx].length > 2) // handle the case where the string is passed in form -j0 (number beside j)
                     {
                         try
                         {
-                            var substring:String= neko.Sys.args()[arg_idx].substr(2);
+                            var substring:String= Sys.args()[arg_idx].substr(2);
                             passedInt = Std.parseInt(substring);
                         }
                         catch (err: Dynamic)
@@ -181,7 +181,7 @@ class WvEncode
 
                         try
                         {
-                            passedInt = Std.parseInt(neko.Sys.args()[arg_idx]);
+                            passedInt = Std.parseInt(Sys.args()[arg_idx]);
                         }
                         catch (err: Dynamic)
                         {
@@ -199,19 +199,19 @@ class WvEncode
                     }
                     else
                     {
-                        neko.Lib.println("-j0 or -j1 only!");
+                        Sys.println("-j0 or -j1 only!");
                         ++error_count;
                     }
                 }
-                else if (StringTools.startsWith(neko.Sys.args()[arg_idx], "-s") || StringTools.startsWith(neko.Sys.args()[arg_idx], "-S"))
+                else if (StringTools.startsWith(Sys.args()[arg_idx], "-s") || StringTools.startsWith(Sys.args()[arg_idx], "-S"))
                 {
                     var passedDouble:Float= 0; // noise shaping off
 
-                    if (neko.Sys.args()[arg_idx].length > 2) // handle the case where the string is passed in form -s0 (number beside s)
+                    if (Sys.args()[arg_idx].length > 2) // handle the case where the string is passed in form -s0 (number beside s)
                     {
                         try
                         {
-                            var substring:String= neko.Sys.args()[arg_idx].substr(2);
+                            var substring:String= Sys.args()[arg_idx].substr(2);
                             passedDouble = Std.parseFloat(substring);
                         }
                         catch (err: Dynamic)
@@ -224,7 +224,7 @@ class WvEncode
 
                         try
                         {
-                            passedDouble = Std.parseFloat(neko.Sys.args()[arg_idx]);
+                            passedDouble = Std.parseFloat(Sys.args()[arg_idx]);
                         }
                         catch (err: Dynamic)
                         {
@@ -244,31 +244,31 @@ class WvEncode
                     }
                     else
                     {
-                        neko.Lib.println("-s-1.00 to -s1.00 only!");
+                        Sys.println("-s-1.00 to -s1.00 only!");
                         ++error_count;
                     }
                 }
                 else
                 {
-                    neko.Lib.println("illegal option: " + neko.Sys.args()[arg_idx]);
+                    Sys.println("illegal option: " + Sys.args()[arg_idx]);
                     ++error_count;
                 }
             }
             else if (infilename.length == 0)
             {
-                infilename = neko.Sys.args()[arg_idx];
+                infilename = Sys.args()[arg_idx];
             }
             else if (outfilename.length == 0)
             {
-                outfilename = neko.Sys.args()[arg_idx];
+                outfilename = Sys.args()[arg_idx];
             }
             else if (out2filename.length == 0)
             {
-                out2filename = neko.Sys.args()[arg_idx];
+                out2filename = Sys.args()[arg_idx];
             }
             else
             {
-                neko.Lib.println("extra unknown argument: " + neko.Sys.args()[arg_idx]);
+                Sys.println("extra unknown argument: " + Sys.args()[arg_idx]);
                 ++error_count;
             }
 
@@ -278,7 +278,7 @@ class WvEncode
         // check for various command-line argument problems
         if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(haxe.Int32.complement(config.flags), haxe.Int32.or(haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG), haxe.Int32.ofInt(Defines.CONFIG_FAST_FLAG)))) == 0)
         {
-            neko.Lib.println("high and fast modes are mutually exclusive!");
+            Sys.println("high and fast modes are mutually exclusive!");
             ++error_count;
         }
         
@@ -286,7 +286,7 @@ class WvEncode
         {
             if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) != 0 ) && (out2filename.length == 0))
             {
-                neko.Lib.println("need name for correction file!");
+                Sys.println("need name for correction file!");
                 ++error_count;
             }
         }
@@ -294,44 +294,44 @@ class WvEncode
         {
             if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.or(haxe.Int32.ofInt(Defines.CONFIG_SHAPE_OVERRIDE), haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC)))) != 0)
             {
-                neko.Lib.println("-s and -c options are for hybrid mode (-b) only!");
+                Sys.println("-s and -c options are for hybrid mode (-b) only!");
                 ++error_count;
             }
         }
 
         if ((out2filename.length != 0) &&  (haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) == 0 ))
         {
-            neko.Lib.println("third filename specified without -c option!");
+            Sys.println("third filename specified without -c option!");
             ++error_count;
         }
 
         if (error_count == 0)
         {
-            neko.Lib.println(sign_on1);
-            neko.Lib.println(sign_on2);
+            Sys.println(sign_on1);
+            Sys.println(sign_on2);
         }
         else
         {
-            neko.Sys.exit(1);
+            Sys.exit(1);
         }
 
         if ((infilename.length == 0) || (outfilename.length == 0) || ((out2filename.length == 0) &&  (haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) != 0 )))
         {
-            neko.Lib.println(usage0);
-            neko.Lib.println(usage1);
-            neko.Lib.println(usage2);
-            neko.Lib.println(usage3);
-            neko.Lib.println(usage4);
-            neko.Lib.println(usage5);
-            neko.Lib.println(usage6);
-            neko.Lib.println(usage7);
-            neko.Lib.println(usage8);
-            neko.Lib.println(usage9);
-            neko.Lib.println(usage10);
-            neko.Lib.println(usage11);
-            neko.Lib.println(usage12);
+            Sys.println(usage0);
+            Sys.println(usage1);
+            Sys.println(usage2);
+            Sys.println(usage3);
+            Sys.println(usage4);
+            Sys.println(usage5);
+            Sys.println(usage6);
+            Sys.println(usage7);
+            Sys.println(usage8);
+            Sys.println(usage9);
+            Sys.println(usage10);
+            Sys.println(usage11);
+            Sys.println(usage12);
 
-            neko.Sys.exit(1);
+            Sys.exit(1);
         }
 
 
@@ -348,12 +348,12 @@ class WvEncode
             
         end = currentDate.getTime();
 
-        neko.Lib.println(end - start + " milli seconds to process WavPack file in main loop");
+        Sys.println(end - start + " milli seconds to process WavPack file in main loop");
 
 
         if (result > 0)
         {
-            neko.Lib.println("error occured!");
+            Sys.println("error occured!");
             ++error_count;
         }
     }
@@ -382,9 +382,9 @@ class WvEncode
         var wpc:WavpackContext= new WavpackContext();
         var result:Int;
         
-        var din = neko.io.File.read(infilename,true);
+        var din = sys.io.File.read(infilename,true);
         
-        var wv_file = neko.io.File.write(outfilename,true);
+        var wv_file = sys.io.File.write(outfilename,true);
 
         wpc.outfile = wv_file;
 
@@ -400,7 +400,7 @@ class WvEncode
                 (riff_chunk_header[8] != 87) || (riff_chunk_header[9] != 65) ||
                 (riff_chunk_header[10] != 86) || (riff_chunk_header[11] != 69))
         {
-            neko.Lib.println(infilename + " is not a valid .WAV file!");
+            Sys.println(infilename + " is not a valid .WAV file!");
 
             try
             {
@@ -423,7 +423,7 @@ class WvEncode
 
             if (bcount != 8)
             {
-                neko.Lib.println(infilename + " is not a valid .WAV file!");
+                Sys.println(infilename + " is not a valid .WAV file!");
 
                 try
                 {
@@ -467,7 +467,7 @@ class WvEncode
 
                 if (check == 1)
                 {
-                    neko.Lib.println(infilename + " is not a valid .WAV file!");
+                    Sys.println(infilename + " is not a valid .WAV file!");
 
                     try
                     {
@@ -531,7 +531,7 @@ class WvEncode
 
                 if (supported != Defines.TRUE)
                 {
-                    neko.Lib.println(infilename + " is an unsupported .WAV format!");
+                    Sys.println(infilename + " is an unsupported .WAV format!");
 
                     try
                     {
@@ -564,7 +564,7 @@ class WvEncode
 
                 if (bcount != bytes_to_skip)
                 {
-                    neko.Lib.println("error occurred in skipping bytes");
+                    Sys.println("error occurred in skipping bytes");
 
                     try
                     {
@@ -589,7 +589,7 @@ class WvEncode
         // if we are creating a "correction" file, open it now for writing
         if (out2filename.length > 0)
         {
-            wvc_file = neko.io.File.write(out2filename,true);
+            wvc_file = sys.io.File.write(out2filename,true);
             wpc.correction_outfile = wvc_file;
         }
     
@@ -607,7 +607,7 @@ class WvEncode
         // we're now done with any WavPack blocks, so flush any remaining data
         if ((result == Defines.NO_ERROR) && (WavPackUtils.WavpackFlushSamples(wpc) == 0))
         {
-            neko.Lib.println(WavPackUtils.WavpackGetErrorMessage(wpc));
+            Sys.println(WavPackUtils.WavpackGetErrorMessage(wpc));
             result = Defines.HARD_ERROR;
         }
 
@@ -617,7 +617,7 @@ class WvEncode
         if ((result == Defines.NO_ERROR) &&
                 (WavPackUtils.WavpackGetNumSamples(wpc) != WavPackUtils.WavpackGetSampleIndex(wpc)))
         {
-            neko.Lib.println("couldn't read all samples, file may be corrupt!!");
+            Sys.println("couldn't read all samples, file may be corrupt!!");
             result = Defines.SOFT_ERROR;
         }
 
@@ -629,7 +629,7 @@ class WvEncode
         }
         catch (err: Dynamic)
         {
-            neko.Lib.println("Can't close WavPack file!");
+            Sys.println("Can't close WavPack file!");
 
             if (result == Defines.NO_ERROR)
             {
@@ -748,15 +748,16 @@ class WvEncode
             wpc.byte_idx = 0; // new WAV buffer data so reset the buffer index to zero
             if (WavPackUtils.WavpackPackSamples(wpc, sample_buffer, sample_count) == 0)
             {
-                neko.Lib.println(WavPackUtils.WavpackGetErrorMessage(wpc));
+                Sys.println(WavPackUtils.WavpackGetErrorMessage(wpc));
 
                 return Defines.HARD_ERROR;
             }
         }
+trace("main loop complete");
 
         if (WavPackUtils.WavpackFlushSamples(wpc) == 0)
         {
-            neko.Lib.println(WavPackUtils.WavpackGetErrorMessage(wpc));
+            Sys.println(WavPackUtils.WavpackGetErrorMessage(wpc));
 
             return Defines.HARD_ERROR;
         }
@@ -798,7 +799,7 @@ class WvEncode
                     lpBuffer[i] = tempI;
                     if(i % 1000 == 0)
                     {
-//                        neko.Lib.print(".");
+//                        Lib.print(".");
                     }
                 }
 

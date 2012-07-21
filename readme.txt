@@ -6,12 +6,12 @@
 ////////////////////////////////////////////////////////////////////////////
 
 This package contains a Haxe implementation of the tiny version of the WavPack 
-4.40 encoder. It is packaged with 2 demo command-line programs that accept a
-RIFF wav file as input and output a WavPack encoded file.
-One demo command-line program is designed to run with Neko, the
-other uses your C++ compiler to produce a native executable.
+4.40 encoder. It is packaged with a demo command-line program that accepts a
+RIFF wav file as input and outputs a WavPack encoded file.
+It is possible to generate outputs in the following lanaguages:
+neko, c++, c sharp, java
 There is also a demo Flash WavPack encoder.
-This code has been tested against Haxe 2.09
+This code has been tested against Haxe 2.10
 
 ===
 To compile the .hx files for use with Neko, use the following command
