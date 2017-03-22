@@ -1,7 +1,7 @@
 /*
 ** Defines.hx
 **
-** Copyright (c) 2011-2012 Peter McQuillan
+** Copyright (c) 2011-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -48,7 +48,7 @@ class Defines
 
     // encountered
     public static inline var FALSE:Int= 0;
-//    public static inline var FALSE_STEREO:Int= 0x40000000; // block is stereo, but data is mono
+    public static inline var FALSE_STEREO:Int= 0x40000000; // block is stereo, but data is mono
     public static inline var FINAL_BLOCK:Int= 0x1000; // final block of multichannel segment
     public static inline var FLOAT_DATA:Int= 0x80; // ieee 32-bit floating point data
     public static inline var FLOAT_EXCEPTIONS:Int= 0x20; // contains exceptions (inf, nan, etc.)
@@ -119,11 +119,5 @@ class Defines
     public static inline var SHIFT_MASK:Int= (0x1f << SHIFT_LSB);
     public static inline var MAG_MASK:Int= (0x1f << MAG_LSB);
 
-    // Redefine some of the above in the form of Int32 so as to work correctly with Neko
-
-    private static inline var HALF_FALSE_STEREO:Int= 0x20000000; // FALSE_STEREO is too large for Neko 31 bit integers
-    private static inline var HALF_FALSE_STEREO_INT32 : haxe.Int32 = haxe.Int32.ofInt(HALF_FALSE_STEREO);
-    private static inline var MONO_FLAG_INT32:haxe.Int32 = haxe.Int32.ofInt(MONO_FLAG);
-    public static inline var FALSE_STEREO_INT32:haxe.Int32 = haxe.Int32.shl(HALF_FALSE_STEREO_INT32,1);
-    public static inline var FALSE_STEREO_OR_MONO_FLAG:haxe.Int32 = haxe.Int32.or(MONO_FLAG_INT32,FALSE_STEREO_INT32);
+    public static inline var FALSE_STEREO_OR_MONO_FLAG: Int = (MONO_FLAG | FALSE_STEREO);
 }

@@ -1,7 +1,7 @@
 /*
 ** RecordingEvent.hx
 **
-** Copyright (c) 2012 Peter McQuillan
+** Copyright (c) 2012-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -13,8 +13,8 @@
 	
 	class RecordingEvent extends flash.events.Event {
 		
-		public var time(getTime, setTime) : Float;
-		public var bytesize(getSize, setSize) : Int;
+		public var time(get_time, set_time) : Float;
+		public var bytesize(get_bytesize, set_bytesize) : Int;
 		public static var RECORDING:String = "recording";
 		
 		var _time:Float;
@@ -27,20 +27,20 @@
 			_size = bytesize;
 		}
 
-		public function getSize():Int {
+		public function get_bytesize():Int {
 			return _size;
 		}
 
-		public function setSize(value:Int):Int {
+		public function set_bytesize(value:Int):Int {
 			_size = value;
 			return value;
 		}
 				
-		public function getTime():Float{
+		public function get_time():Float{
 			return _time;
 		}
 	
-		public function setTime(value:Float):Float{
+		public function set_time(value:Float):Float{
 			_time = value;
 			return value;
 		}

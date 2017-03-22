@@ -1,7 +1,7 @@
 /*
 ** WavPackUtils.hx
 **
-** Copyright (c) 2011 Peter McQuillan
+** Copyright (c) 2011-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -59,12 +59,11 @@ class WavPackUtils
     // to seek all the way to the end to determine the actual duration. A return of
     // FALSE indicates an error.
     public static function WavpackSetConfiguration(wpc:WavpackContext, config:WavpackConfig, total_samples:Int):Int {
-        var flags:haxe.Int32= haxe.Int32.ofInt(config.bytes_per_sample - 1);
+        var flags: Int = config.bytes_per_sample - 1;
         var wps:WavpackStream= wpc.stream;
         var bps:Int= 0;
         var shift:Int;
         var i:Int;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         if (config.num_channels > 2)
         {
@@ -81,9 +80,9 @@ class WavPackUtils
         wpc.config.block_samples = config.block_samples;
         wpc.config.flags = config.flags;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_VERY_HIGH_FLAG))) != 0 )
-        {
-            wpc.config.flags = haxe.Int32.or(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG));
+		if ((wpc.config.flags & Defines.CONFIG_VERY_HIGH_FLAG) != 0) 
+		{
+		    wpc.config.flags |= Defines.CONFIG_HIGH_FLAG;
         }
 
         shift = (config.bytes_per_sample * 8) - config.bits_per_sample;
@@ -98,40 +97,40 @@ class WavPackUtils
             }
         }
 
-        flags = haxe.Int32.or(flags, haxe.Int32.ofInt(i << Defines.SRATE_LSB));
-        flags = haxe.Int32.or(flags, haxe.Int32.ofInt(shift << Defines.SHIFT_LSB));
+		flags |= (i << Defines.SRATE_LSB);
+        flags |= (shift << Defines.SHIFT_LSB);
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HYBRID_FLAG))) != 0 )
+        if((config.flags & Defines.CONFIG_HYBRID_FLAG) != 0 )
         {
-            flags = haxe.Int32.or(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG | Defines.HYBRID_BITRATE | Defines.HYBRID_BALANCE));
+		    flags |= (Defines.HYBRID_FLAG | Defines.HYBRID_BITRATE | Defines.HYBRID_BALANCE);
 
-            if( (haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_SHAPE_OVERRIDE))) != 0 ) && 
-                (haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_HYBRID_SHAPE))) != 0 ) && 
+            if( ((wpc.config.flags & Defines.CONFIG_SHAPE_OVERRIDE) != 0 ) && 
+                ((wpc.config.flags & Defines.CONFIG_HYBRID_SHAPE) != 0 ) && 
                 (config.shaping_weight != 0))
             {
                 wpc.config.shaping_weight = config.shaping_weight;
-                flags = haxe.Int32.or(flags, haxe.Int32.ofInt(Defines.HYBRID_SHAPE | Defines.NEW_SHAPING));
+				flags |= (Defines.HYBRID_SHAPE | Defines.NEW_SHAPING);
             }
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_OPTIMIZE_WVC))) != 0 )
+            if((wpc.config.flags & Defines.CONFIG_OPTIMIZE_WVC) != 0 )
             {
-                flags = haxe.Int32.or(flags, haxe.Int32.ofInt(Defines.CROSS_DECORR));
+			    flags |= Defines.CROSS_DECORR;
             }
 
             bps = config.bitrate;
         }
         else
         {
-            flags = haxe.Int32.or(flags, haxe.Int32.ofInt(Defines.CROSS_DECORR));
+		    flags |= Defines.CROSS_DECORR;
         }
 
-        if( (haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_JOINT_OVERRIDE))) == 0 ) || 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_JOINT_STEREO))) != 0 ) )
+        if( ((config.flags & Defines.CONFIG_JOINT_OVERRIDE) == 0 ) || 
+            ((config.flags & Defines.CONFIG_JOINT_STEREO) != 0 ) )
         {
-            flags = haxe.Int32.or(flags, haxe.Int32.ofInt(Defines.JOINT_STEREO));
+		    flags |= Defines.JOINT_STEREO;
         }
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) != 0 )
+        if((config.flags & Defines.CONFIG_CREATE_WVC) != 0 )
         {
             wpc.wvc_flag = Defines.TRUE;
         }
@@ -148,14 +147,13 @@ class WavPackUtils
         wps.wphdr.ckSize = 32- 8;
         wps.wphdr.total_samples = wpc.total_samples;
         wps.wphdr.version = wpc.stream_version;
-        wps.wphdr.flags = haxe.Int32.or(flags, haxe.Int32.ofInt(Defines.INITIAL_BLOCK | Defines.FINAL_BLOCK));
+		wps.wphdr.flags = flags | Defines.INITIAL_BLOCK | Defines.FINAL_BLOCK;
         wps.bits = bps;
 
         if (config.num_channels == 1)
         {
-            wps.wphdr.flags = haxe.Int32.and(wps.wphdr.flags, haxe.Int32.complement(haxe.Int32.ofInt(Defines.JOINT_STEREO | Defines.CROSS_DECORR | Defines.HYBRID_BALANCE)));
-            wps.wphdr.flags = haxe.Int32.or(wps.wphdr.flags, haxe.Int32.ofInt(Defines.MONO_FLAG));
-
+		    wps.wphdr.flags &= ~(Defines.JOINT_STEREO | Defines.CROSS_DECORR | Defines.HYBRID_BALANCE);
+		    wps.wphdr.flags |= Defines.MONO_FLAG;
         }
 
         return Defines.TRUE;
@@ -165,7 +163,6 @@ class WavPackUtils
     // blocks and initializing the stream. Call after WavpackSetConfiguration()
     // and before WavpackPackSamples(). A return of FALSE indicates an error.
     public static function WavpackPackInit(wpc:WavpackContext):Int {
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         if (wpc.config.block_samples > 0)
         {
@@ -173,7 +170,7 @@ class WavPackUtils
         }
         else
         {
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG))) != 0 )
+            if((wpc.config.flags & Defines.CONFIG_HIGH_FLAG) != 0 )
             {
                 wpc.block_samples = wpc.config.sample_rate;
             }
@@ -216,21 +213,20 @@ class WavPackUtils
     // return of FALSE indicates an error.
     public static function WavpackPackSamples(wpc:WavpackContext, sample_buffer:Array<Int>, sample_count:Int):Int {
         var wps:WavpackStream= wpc.stream;
-        var flags:haxe.Int32= wps.wphdr.flags;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
+        var flags: Int = wps.wphdr.flags;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.SHIFT_MASK))) != 0 )
+		if ((flags & Defines.SHIFT_MASK) != 0)
         {
-            var shift:Int= ((haxe.Int32.toInt(flags) & Defines.SHIFT_MASK) >> Defines.SHIFT_LSB);
+		    var shift: Int = ((flags & Defines.SHIFT_MASK) >> Defines.SHIFT_LSB);
             var ptr:Array<Int>= sample_buffer;
             var cnt:Int= sample_count;
             var ptrIndex:Int= 0;
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 )
+            if((flags & Defines.FALSE_STEREO_OR_MONO_FLAG ) != 0 )
             {
                 while (cnt > 0)
                 {
-                    ptr[ptrIndex] = haxe.Int32.toInt(haxe.Int32.shr(haxe.Int32.ofInt(ptr[ptrIndex]), shift));
+				    ptr[ptrIndex] = ptr[ptrIndex] >> shift;
                     ptrIndex++;
                     cnt--;
                 }
@@ -239,9 +235,9 @@ class WavPackUtils
             {
                 while (cnt > 0)
                 {
-                    ptr[ptrIndex] = haxe.Int32.toInt(haxe.Int32.shr(haxe.Int32.ofInt(ptr[ptrIndex]), shift));
+				    ptr[ptrIndex] = ptr[ptrIndex] >> shift;
                     ptrIndex++;
-                    ptr[ptrIndex] = haxe.Int32.toInt(haxe.Int32.shr(haxe.Int32.ofInt(ptr[ptrIndex]), shift));
+					ptr[ptrIndex] = ptr[ptrIndex] >> shift;
                     ptrIndex++;
                     cnt--;
                 }
@@ -255,8 +251,8 @@ class WavPackUtils
 
             if (wpc.acc_samples == 0)
             {
-                flags = haxe.Int32.and(flags, haxe.Int32.complement(haxe.Int32.ofInt(Defines.MAG_MASK)));
-                flags = haxe.Int32.add(flags, haxe.Int32.ofInt((1 << Defines.MAG_LSB) * (((haxe.Int32.toInt(flags) & Defines.BYTES_STORED) * 8) + 7)));
+                flags &= ~Defines.MAG_MASK;
+                flags += ((1 << Defines.MAG_LSB) * (((flags & Defines.BYTES_STORED) * 8) + 7));
 
                 wps.wphdr.block_index = wps.sample_index;
                 wps.wphdr.flags = flags;

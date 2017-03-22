@@ -1,7 +1,7 @@
 /*
 ** WvEncode.hx
 **
-** Copyright (c) 2011-2012 Peter McQuillan
+** Copyright (c) 2011-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -27,9 +27,9 @@ class WvEncode
         var VERSION_STR:String= "4.40";
         var DATE_STR:String= "2007-01-16";
 
-        var sign_on1:String= "Haxe WavPack Encoder (c) 2011-2012 Peter McQuillan";
+        var sign_on1:String= "Haxe WavPack Encoder (c) 2011-2017 Peter McQuillan";
         var sign_on2:String= "based on TINYPACK - Tiny Audio Compressor  Version " + VERSION_STR +
-            " " + DATE_STR + " Copyright (c) 1998 - 2012 Conifer Software.  All Rights Reserved.";
+            " " + DATE_STR + " Copyright (c) 1998 - 2017 Conifer Software.  All Rights Reserved.";
 
         var usage0:String= "";
         var usage1:String= " Usage:   WvEncode [-options] infile.wav outfile.wv [outfile.wvc]";
@@ -56,7 +56,6 @@ class WvEncode
         var result:Int;
         var i:Int;
         var arg_idx:Int= 0;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
 
         // loop through command-line arguments
@@ -68,27 +67,27 @@ class WvEncode
                 {
                     if (StringTools.startsWith(Sys.args()[arg_idx], "-cc") || StringTools.startsWith(Sys.args()[arg_idx], "-CC"))
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC));
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_OPTIMIZE_WVC));
+                        config.flags = config.flags | Defines.CONFIG_CREATE_WVC;
+                        config.flags = config.flags | Defines.CONFIG_OPTIMIZE_WVC;
                     }
                     else
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC));
+					    config.flags = config.flags | Defines.CONFIG_CREATE_WVC;
                     }
                 }
                 else if (StringTools.startsWith(Sys.args()[arg_idx], "-f") || StringTools.startsWith(Sys.args()[arg_idx], "-F"))
                 {
-                    config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_FAST_FLAG));
+				    config.flags = config.flags | Defines.CONFIG_FAST_FLAG;
                 }
                 else if (StringTools.startsWith(Sys.args()[arg_idx], "-h") || StringTools.startsWith(Sys.args()[arg_idx], "-H"))
                 {
                     if (StringTools.startsWith(Sys.args()[arg_idx], "-hh") || StringTools.startsWith(Sys.args()[arg_idx], "-HH"))
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_VERY_HIGH_FLAG));
+					    config.flags = config.flags | Defines.CONFIG_VERY_HIGH_FLAG;
                     }
                     else
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG));
+					    config.flags = config.flags | Defines.CONFIG_HIGH_FLAG;
                     }
                 }
                 else if (StringTools.startsWith(Sys.args()[arg_idx], "-k") || StringTools.startsWith(Sys.args()[arg_idx], "-K"))
@@ -124,7 +123,7 @@ class WvEncode
                 else if (StringTools.startsWith(Sys.args()[arg_idx], "-b") || StringTools.startsWith(Sys.args()[arg_idx], "-B"))
                 {
                     var passedDouble:Float= 0;
-                    config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HYBRID_FLAG));
+					config.flags = config.flags | Defines.CONFIG_HYBRID_FLAG;
 
                     if (Sys.args()[arg_idx].length > 2)    // handle the case where the string is passed in form -b0 (number beside b)
                     {
@@ -190,12 +189,12 @@ class WvEncode
 
                     if (passedInt == 0)
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_JOINT_OVERRIDE));
-                        config.flags = haxe.Int32.and(config.flags, haxe.Int32.complement(haxe.Int32.ofInt(Defines.CONFIG_JOINT_STEREO)));
+					    config.flags = config.flags | Defines.CONFIG_JOINT_OVERRIDE;
+						config.flags = config.flags & ~Defines.CONFIG_HYBRID_FLAG;
                     }
                     else if (passedInt == 1)
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.or(haxe.Int32.ofInt(Defines.CONFIG_JOINT_OVERRIDE), haxe.Int32.ofInt(Defines.CONFIG_JOINT_STEREO)));
+					    config.flags = config.flags | (Defines.CONFIG_JOINT_OVERRIDE | Defines.CONFIG_JOINT_STEREO);
                     }
                     else
                     {
@@ -235,12 +234,12 @@ class WvEncode
 
                     if (config.shaping_weight == 0)
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_SHAPE_OVERRIDE));
-                        config.flags = haxe.Int32.and(config.flags, haxe.Int32.complement(haxe.Int32.ofInt(Defines.CONFIG_HYBRID_SHAPE)));
+                        config.flags = config.flags | Defines.CONFIG_SHAPE_OVERRIDE;
+					    config.flags = config.flags & ~Defines.CONFIG_HYBRID_SHAPE;
                     }
                     else if ((config.shaping_weight >= -1024) && (config.shaping_weight <= 1024))
                     {
-                        config.flags = haxe.Int32.or(config.flags, haxe.Int32.or(haxe.Int32.ofInt(Defines.CONFIG_HYBRID_SHAPE), haxe.Int32.ofInt(Defines.CONFIG_SHAPE_OVERRIDE)));
+                        config.flags = config.flags | (Defines.CONFIG_HYBRID_SHAPE | Defines.CONFIG_SHAPE_OVERRIDE);
                     }
                     else
                     {
@@ -276,15 +275,15 @@ class WvEncode
         }
 
         // check for various command-line argument problems
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(haxe.Int32.complement(config.flags), haxe.Int32.or(haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG), haxe.Int32.ofInt(Defines.CONFIG_FAST_FLAG)))) == 0)
+		if ((~config.flags & (Defines.CONFIG_HIGH_FLAG | Defines.CONFIG_FAST_FLAG)) == 0)
         {
             Sys.println("high and fast modes are mutually exclusive!");
             ++error_count;
         }
         
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HYBRID_FLAG))) != 0 )
+		if ((config.flags & Defines.CONFIG_HYBRID_FLAG) != 0)
         {
-            if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) != 0 ) && (out2filename.length == 0))
+            if(((config.flags & Defines.CONFIG_CREATE_WVC) != 0 ) && (out2filename.length == 0))
             {
                 Sys.println("need name for correction file!");
                 ++error_count;
@@ -292,14 +291,14 @@ class WvEncode
         }
         else
         {
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.or(haxe.Int32.ofInt(Defines.CONFIG_SHAPE_OVERRIDE), haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC)))) != 0)
+		    if((config.flags & (Defines.CONFIG_SHAPE_OVERRIDE | Defines.CONFIG_CREATE_WVC)) != 0)
             {
                 Sys.println("-s and -c options are for hybrid mode (-b) only!");
                 ++error_count;
             }
         }
 
-        if ((out2filename.length != 0) &&  (haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) == 0 ))
+        if ((out2filename.length != 0) && ((config.flags & Defines.CONFIG_CREATE_WVC) == 0 ))
         {
             Sys.println("third filename specified without -c option!");
             ++error_count;
@@ -315,7 +314,7 @@ class WvEncode
             Sys.exit(1);
         }
 
-        if ((infilename.length == 0) || (outfilename.length == 0) || ((out2filename.length == 0) &&  (haxe.Int32.compare(zeroCheck, haxe.Int32.and(config.flags, haxe.Int32.ofInt(Defines.CONFIG_CREATE_WVC))) != 0 )))
+        if ((infilename.length == 0) || (outfilename.length == 0) || ((out2filename.length == 0) && (config.flags & Defines.CONFIG_CREATE_WVC) != 0 ))
         {
             Sys.println(usage0);
             Sys.println(usage1);

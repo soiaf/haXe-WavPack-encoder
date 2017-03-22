@@ -1,7 +1,7 @@
 /*
 ** WavpackConfig.hx
 **
-** Copyright (c) 2011 Peter McQuillan
+** Copyright (c) 2011-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -17,11 +17,11 @@ class WavpackConfig
     public var bytes_per_sample:Int;
     public var num_channels:Int;
     public var block_samples:Int;
-    public var flags : haxe.Int32; 
+    public var flags : Int; 
     public var sample_rate:Int;
 
     public function new()
     {
-        flags = haxe.Int32.ofInt(0);
+        flags = 0;
     } 
 }

@@ -1,7 +1,7 @@
 /*
 ** WavpackHeader.hx
 **
-** Copyright (c) 2011 Peter McQuillan
+** Copyright (c) 2011-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -19,7 +19,7 @@ class WavpackHeader
     public var total_samples:Int; // was uint32_t in C
     public var block_index:Int; // was uint32_t in C
     public var block_samples:Int; // was uint32_t in C
-    public var flags: haxe.Int32; // was uint32_t in C
+    public var flags: Int; // was uint32_t in C
     public var crc:Int; // was uint32_t in C
     
     public function new()

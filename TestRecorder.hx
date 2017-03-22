@@ -1,7 +1,7 @@
 /*
 ** TestRecorder.hx
 **
-** Copyright (c) 2012 Peter McQuillan
+** Copyright (c) 2012-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -68,7 +68,7 @@
             
             var w : Int = 60;
             var h : Int = 40;
-            var colors : Array <Int> = [0xF5F5F5, 0xA0A0A0];
+            var colors : Array <UInt> = [0xF5F5F5, 0xA0A0A0];
             var alphas : Array <Int>  = [1, 1];
             var ratios : Array <Int> = [0, 255];
             var matrix : flash.geom.Matrix = new flash.geom.Matrix();

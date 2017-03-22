@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //                   Haxe Implementation of WavPack Encoder               //
-//                   Copyright (c) 2011-2012 Peter McQuillan              //
+//                   Copyright (c) 2011-2017 Peter McQuillan              //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@ RIFF wav file as input and outputs a WavPack encoded file.
 It is possible to generate outputs in the following lanaguages:
 neko, c++, c sharp, java
 There is also a demo Flash WavPack encoder.
-This code has been tested against Haxe 2.10
+This code has been tested against Haxe 3.4.2
 
 ===
 To compile the .hx files for use with Neko, use the following command

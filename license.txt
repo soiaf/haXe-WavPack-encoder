@@ -1,6 +1,6 @@
-Copyright (c) 2011-2012 Peter McQuillan
+Copyright (c) 2011-2017 Peter McQuillan
 
-Portions Copyright (c) 2011-2012 Conifer Software
+Portions Copyright (c) 2011-2017 Conifer Software
 
 All rights reserved.
 

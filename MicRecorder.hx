@@ -1,7 +1,7 @@
 /*
 ** RecordingEvent.hx
 **
-** Copyright (c) 2012 Peter McQuillan
+** Copyright (c) 2012-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -13,12 +13,11 @@
 
 	class MicRecorder extends flash.events.EventDispatcher {
 		
-		public var gain(getGain, setGain) : UInt;
-		public var microphone(getMicrophone, setMicrophone) : flash.media.Microphone;
-		public var output(getOutput, null) : flash.utils.ByteArray
-		;
-		public var rate(getRate, setRate) : UInt;
-		public var silenceLevel(getSilenceLevel, setSilenceLevel) : UInt;
+		public var gain(get_gain, set_gain) : UInt;
+		public var microphone(get_microphone, set_microphone) : flash.media.Microphone;
+		public var output(get_output, null) : flash.utils.ByteArray;
+		public var rate(get_rate, set_rate) : UInt;
+		public var silenceLevel(get_silenceLevel, set_silenceLevel) : UInt;
 		var _gain:UInt;
 		var _rate:UInt;
 		var _silenceLevel:UInt;
@@ -82,7 +81,7 @@
 			config.sample_rate = 8000;  // make sure to change the default value for rate above also
 			
 			/* these set the bitrate for lossy encoding */
-			config.flags = haxe.Int32.or(config.flags, haxe.Int32.ofInt(Defines.CONFIG_HYBRID_FLAG));
+			config.flags = (config.flags | Defines.CONFIG_HYBRID_FLAG);
 			config.bitrate = 1536;
 
 			
@@ -168,43 +167,43 @@
 			dispatchEvent( _completeEvent );
 		}
 			
-		public function getGain():UInt{
+		public function get_gain():UInt{
 			return _gain;
 		}
 
-		public function setGain(value:UInt):UInt{
+		public function set_gain(value:UInt):UInt{
 			_gain = value;
 			return value;
 		}
 
-		public function getRate():UInt{
+		public function get_rate():UInt{
 			return _rate;
 		}
 	
-		public function setRate(value:UInt):UInt{
+		public function set_rate(value:UInt):UInt{
 			_rate = value;
 			return value;
 		}
 			
-		public function getSilenceLevel():UInt{
+		public function get_silenceLevel():UInt{
 			return _silenceLevel;
 		}
 
-		public function setSilenceLevel(value:UInt):UInt{
+		public function set_silenceLevel(value:UInt):UInt{
 			_silenceLevel = value;
 			return value;
 		}
 	
-		public function getMicrophone():flash.media.Microphone{
+		public function get_microphone():flash.media.Microphone{
 			return _microphone;
 		}
 
-		public function setMicrophone(value:flash.media.Microphone):flash.media.Microphone{
+		public function set_microphone(value:flash.media.Microphone):flash.media.Microphone{
 			_microphone = value;
 			return value;
 		}
 
-		public function getOutput():flash.utils.ByteArray
+		public function get_output():flash.utils.ByteArray
 		{
 			return _output;
 		}

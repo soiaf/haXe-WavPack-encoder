@@ -1,7 +1,7 @@
 /*
 ** PackUtils.hx
 **
-** Copyright (c) 2011-2012 Peter McQuillan
+** Copyright (c) 2011-2017 Peter McQuillan
 **
 ** All Rights Reserved.
 **
@@ -27,15 +27,14 @@ class PackUtils
     // and must be called BEFORE any other function in this module.
     public static function pack_init(wpc:WavpackContext):Void {
         var wps:WavpackStream= wpc.stream;
-        var flags:haxe.Int32= wps.wphdr.flags;
+        var flags:Int = wps.wphdr.flags;
         var term_string:Array<Dynamic>;
         var dpp_idx:Int= 0;
         var ti:Int;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         wps.sample_index = 0;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_SHAPE))) != 0 )
+		if((flags & Defines.HYBRID_SHAPE) !=0 )
         {
             var weight:Int= wpc.config.shaping_weight;
 
@@ -48,15 +47,15 @@ class PackUtils
             wps.dc.shaping_acc[0] = wps.dc.shaping_acc[1];
         }
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_VERY_HIGH_FLAG))) != 0 )
+        if((wpc.config.flags & Defines.CONFIG_VERY_HIGH_FLAG) != 0 )
         {
             term_string = very_high_terms;
         }
-        else if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_HIGH_FLAG))) != 0 )
+        else if((wpc.config.flags & Defines.CONFIG_HIGH_FLAG) != 0 )
         {
             term_string = high_terms;
         }
-        else if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wpc.config.flags, haxe.Int32.ofInt(Defines.CONFIG_FAST_FLAG))) != 0 )
+        else if((wpc.config.flags & Defines.CONFIG_FAST_FLAG) != 0 )
         {
             term_string = fast_terms;
         }
@@ -67,14 +66,14 @@ class PackUtils
 
         for (ti in 0...(term_string.length - 1))
         {
-            if ((term_string[ti] >= 0) || (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.CROSS_DECORR))) != 0 ))
+            if ((term_string[ti] >= 0) || ((flags & Defines.CROSS_DECORR) != 0 ))
             {
                 wps.decorr_passes[dpp_idx].term = term_string[ti];
 
                 wps.decorr_passes[dpp_idx].delta = 2;
                 dpp_idx++;
             }
-            else if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.MONO_FLAG))) == 0 )
+            else if((flags & Defines.MONO_FLAG) == 0 )
             {
                 wps.decorr_passes[dpp_idx].term = -3;
 
@@ -121,16 +120,14 @@ class PackUtils
         var i:Int;
         var byteptr:Array<Int> = new Array();
         var byte_idx:Int= 0;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         wpmd.id = Defines.ID_DECORR_WEIGHTS;
 
         i = wps.num_terms - 1;
         while (i >= 0)
         {
-            if ((WordsUtils.store_weight(wps.decorr_passes[i].weight_A) != 0) ||
-                    ((haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 ) &&
-                    (WordsUtils.store_weight(wps.decorr_passes[i].weight_B) != 0)))
+            if ((WordsUtils.store_weight(wps.decorr_passes[i].weight_A) != 0) || ((wps.wphdr.flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0) &&
+                    (WordsUtils.store_weight(wps.decorr_passes[i].weight_B) != 0))
             {
                 break;
             }
@@ -147,7 +144,7 @@ class PackUtils
                 wps.decorr_passes[i].weight_A = WordsUtils.restore_weight(byteptr[byte_idx]);
                 byte_idx++;
 
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
+				if((wps.wphdr.flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0 )
                 {
                     byteptr[byte_idx] = WordsUtils.store_weight(wps.decorr_passes[i].weight_B);
                     wps.decorr_passes[i].weight_B = WordsUtils.restore_weight(byteptr[byte_idx]);
@@ -181,7 +178,6 @@ class PackUtils
         var byteptr:Array<Int> = new Array();
         var byte_idx:Int= 0;
         var dpp_idx:Int= 0;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         wpmd.id = Defines.ID_DECORR_SAMPLES;
 
@@ -224,7 +220,7 @@ class PackUtils
                     }    
                     byte_idx++;
 
-                    if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
+					if((wps.wphdr.flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0)
                     {
                         wps.decorr_passes[dpp_idx].samples_B[0] = WordsUtils.exp2s(temp = WordsUtils.log2s(
                                         wps.decorr_passes[dpp_idx].samples_B[0]));
@@ -301,7 +297,7 @@ class PackUtils
                         byteptr[byte_idx] = ((temp >> 8));
                         byte_idx++;
 
-                        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
+						if((wps.wphdr.flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0)
                         {
                             wps.decorr_passes[dpp_idx].samples_B[m] = WordsUtils.exp2s(temp = WordsUtils.log2s(
                                             wps.decorr_passes[dpp_idx].samples_B[m]));
@@ -352,7 +348,6 @@ class PackUtils
         var byteptr:Array<Int> = new Array();
         var byte_idx:Int= 0;
         var temp:Int;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         wpmd.id = Defines.ID_SHAPING_WEIGHTS;
 
@@ -367,7 +362,7 @@ class PackUtils
         byteptr[byte_idx] = ((temp >> 8));
         byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
+		if((wps.wphdr.flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0)
         {
             wps.dc.error[1] = WordsUtils.exp2s(temp = WordsUtils.log2s(wps.dc.error[1]));
             byteptr[byte_idx] = (temp);
@@ -390,7 +385,7 @@ class PackUtils
             byteptr[byte_idx] = ((temp >> 8));
             byte_idx++;
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(wps.wphdr.flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 )
+		    if((wps.wphdr.flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0)
             {
                 wps.dc.shaping_delta[1] = WordsUtils.exp2s(temp = WordsUtils.log2s(
                                 wps.dc.shaping_delta[1]));
@@ -415,12 +410,12 @@ class PackUtils
         var byte_idx:Int= 0;
 
         wpmd.id = Defines.ID_CONFIG_BLOCK;
-
-        byteptr[byte_idx] = ((haxe.Int32.toInt(wpc.config.flags) >> 8));
+		
+        byteptr[byte_idx] = (wpc.config.flags >> 8);
         byte_idx++;
-        byteptr[byte_idx] = ((haxe.Int32.toInt(wpc.config.flags) >> 16));
+        byteptr[byte_idx] = (wpc.config.flags >> 16);
         byte_idx++;
-        byteptr[byte_idx] = ((haxe.Int32.toInt(wpc.config.flags) >> 24));
+		byteptr[byte_idx] = (wpc.config.flags >> 24);
         byte_idx++;
 
         wpmd.byte_length = byte_idx;
@@ -449,11 +444,10 @@ class PackUtils
 
     public static function pack_start_block(wpc:WavpackContext):Int {
         var wps:WavpackStream= wpc.stream;
-        var flags:haxe.Int32= wps.wphdr.flags;
+        var flags:Int = wps.wphdr.flags;
         var wpmd:WavpackMetadata= new WavpackMetadata();
         var i:Int= 0;
         var chunkSize:Int;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
 
         wps.lossy_block = Defines.FALSE;
@@ -485,10 +479,10 @@ class PackUtils
         wps.blockbuff[21] = ((wps.wphdr.block_samples >>> 8));
         wps.blockbuff[22] = ((wps.wphdr.block_samples >>> 16));
         wps.blockbuff[23] = ((wps.wphdr.block_samples >>> 24));
-        wps.blockbuff[24] = ((haxe.Int32.toInt(wps.wphdr.flags)));
-        wps.blockbuff[25] = ((haxe.Int32.toInt(wps.wphdr.flags) >>> 8));
-        wps.blockbuff[26] = ((haxe.Int32.toInt(wps.wphdr.flags) >>> 16));
-        wps.blockbuff[27] = ((haxe.Int32.toInt(wps.wphdr.flags) >>> 24));
+        wps.blockbuff[24] = (wps.wphdr.flags);
+        wps.blockbuff[25] = (wps.wphdr.flags >>> 8);
+        wps.blockbuff[26] = (wps.wphdr.flags >>> 16);
+        wps.blockbuff[27] = (wps.wphdr.flags >>> 24);
         wps.blockbuff[28] = ((wps.wphdr.crc));
         wps.blockbuff[29] = ((wps.wphdr.crc >>> 8));
         wps.blockbuff[30] = ((wps.wphdr.crc >>> 16));
@@ -506,20 +500,19 @@ class PackUtils
         WordsUtils.write_entropy_vars(wps, wpmd);
         copy_metadata(wpmd, wps.blockbuff, wps.blockend);
 
-        if (((haxe.Int32.toInt(flags) & Defines.SRATE_MASK) == Defines.SRATE_MASK) &&
-                (wpc.config.sample_rate != 44100))
+		if(((flags & Defines.SRATE_MASK) == Defines.SRATE_MASK) && (wpc.config.sample_rate != 44100))
         {
             write_sample_rate(wpc, wpmd);
             copy_metadata(wpmd, wps.blockbuff, wps.blockend);
         }
 
-        if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) != 0 )
+		if((flags & Defines.HYBRID_FLAG) != 0)
         {
             WordsUtils.write_hybrid_profile(wps, wpmd);
             copy_metadata(wpmd, wps.blockbuff, wps.blockend);
         }
 
-        if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.INITIAL_BLOCK))) != 0 ) && (wps.sample_index == 0))
+		if(((flags & Defines.INITIAL_BLOCK) != 0) && (wps.sample_index == 0))
         {
             write_config_info(wpc, wpmd);
             copy_metadata(wpmd, wps.blockbuff, wps.blockend);
@@ -555,16 +548,16 @@ class PackUtils
             wps.block2buff[21] = ((wps.wphdr.block_samples >>> 8));
             wps.block2buff[22] = ((wps.wphdr.block_samples >>> 16));
             wps.block2buff[23] = ((wps.wphdr.block_samples >>> 24));
-            wps.block2buff[24] = ((haxe.Int32.toInt(wps.wphdr.flags)));
-            wps.block2buff[25] = ((haxe.Int32.toInt(wps.wphdr.flags) >>> 8));
-            wps.block2buff[26] = ((haxe.Int32.toInt(wps.wphdr.flags) >>> 16));
-            wps.block2buff[27] = ((haxe.Int32.toInt(wps.wphdr.flags) >>> 24));
+            wps.block2buff[24] =  wps.wphdr.flags;
+            wps.block2buff[25] = (wps.wphdr.flags >>> 8);
+            wps.block2buff[26] = (wps.wphdr.flags >>> 16);
+            wps.block2buff[27] = (wps.wphdr.flags >>> 24);
             wps.block2buff[28] = ((wps.wphdr.crc));
             wps.block2buff[29] = ((wps.wphdr.crc >>> 8));
             wps.block2buff[30] = ((wps.wphdr.crc >>> 16));
             wps.block2buff[31] = ((wps.wphdr.crc >>> 24));
 
-            if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_SHAPE))) != 0 )
+			if((flags & Defines.HYBRID_SHAPE) != 0)
             {
                 write_shaping_info(wps, wpmd);
                 copy_metadata(wpmd, wps.block2buff, wps.block2end);
@@ -587,18 +580,17 @@ class PackUtils
     public static function pack_samples(wpc:WavpackContext, buffer:Array<Int>, sample_count:Int):Int {
         var wps:WavpackStream= wpc.stream;
 
-        var flags:haxe.Int32= wps.wphdr.flags;
+        var flags: Int = wps.wphdr.flags;
         var tcount:Int;
         var lossy:Int= 0;
         var m:Int;
         var byte_idx:Int= 0;
         var dpp_idx:Int= 0;
-        var crc : haxe.Int32 = haxe.Int32.ofInt(0);
-        var crc2 : haxe.Int32 = haxe.Int32.ofInt(0);
+        var crc : Int = 0;
+        var crc2 : Int = 0;
         var i:Int;
         var bptr:Array<Int>;
         var block_samples:Int;
-        var zeroCheck : haxe.Int32 = haxe.Int32.ofInt(0);
 
         if (sample_count == 0)
         {
@@ -614,27 +606,26 @@ class PackUtils
         block_samples += (((wps.blockbuff[21] & 0xFF) << 8));
         block_samples += ((wps.blockbuff[20] & 0xFF));
         m = ((block_samples & (Defines.MAX_TERM - 1)));
+		
+		crc = (wps.blockbuff[31]&0xFF) << 24;
+        crc +=(wps.blockbuff[30]&0xFF) << 16;
+        crc +=(wps.blockbuff[29]&0xFF) << 8;
+        crc +=(wps.blockbuff[28]) & 0xFF;
 
-        crc = haxe.Int32.shl(haxe.Int32.ofInt(wps.blockbuff[31] & 0xFF),24);
-        crc = haxe.Int32.add(crc, haxe.Int32.shl(haxe.Int32.ofInt(wps.blockbuff[30] & 0xFF),16));
-        crc = haxe.Int32.add(crc, haxe.Int32.shl(haxe.Int32.ofInt(wps.blockbuff[29] & 0xFF),8));
-        crc = haxe.Int32.add(crc, haxe.Int32.ofInt(wps.blockbuff[28] & 0xFF));
-
-        crc2 = haxe.Int32.ofInt(0);
+        crc2 = 0;
 
         if (wpc.wvc_flag != 0)
         {
-            crc2 = haxe.Int32.shl(haxe.Int32.ofInt(wps.block2buff[31] & 0xFF),24);
-            crc2 = haxe.Int32.add(crc2, haxe.Int32.shl(haxe.Int32.ofInt(wps.block2buff[30] & 0xFF),16));
-            crc2 = haxe.Int32.add(crc2, haxe.Int32.shl(haxe.Int32.ofInt(wps.block2buff[29] & 0xFF),8));
-            crc2 = haxe.Int32.add(crc2, haxe.Int32.ofInt(wps.block2buff[28] & 0xFF));
+            crc2 = (wps.block2buff[31]&0xFF) << 24;
+            crc2 +=(wps.block2buff[30]&0xFF) << 16;
+            crc2 +=(wps.block2buff[29]&0xFF) << 8;
+            crc2 +=(wps.block2buff[28]) & 0xFF;
         }
 
         bptr = new Array();
         
         /////////////////////// handle lossless mono mode /////////////////////////
-        if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) == 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 ) )
+		if (((flags & Defines.HYBRID_FLAG) == 0) && ((flags & Defines.FALSE_STEREO_OR_MONO_FLAG) != 0))
         {            
             bptr = buffer;
 
@@ -648,8 +639,8 @@ class PackUtils
                     break;
                 }
 
-                code = bptr[byte_idx];        
-                crc = haxe.Int32.add(haxe.Int32.mul(crc, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(code));    
+                code = bptr[byte_idx];      
+                crc = (crc * 3) + code;				  
                 
                 byte_idx++;
 
@@ -702,8 +693,7 @@ class PackUtils
         }
 
         //////////////////// handle the lossless stereo mode //////////////////////
-        else if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) == 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 ) )
+		else if (((flags & Defines.HYBRID_FLAG) == 0) && ((flags & Defines.FALSE_STEREO_OR_MONO_FLAG) == 0))
         {    
 
             bptr = buffer;    
@@ -721,13 +711,13 @@ class PackUtils
                 }
 
                 left = bptr[byte_idx];
-                crc = haxe.Int32.add(haxe.Int32.mul(crc, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(left));
+				crc = (crc * 3) + left;
                 right = bptr[byte_idx + 1];
-                crc = haxe.Int32.add(haxe.Int32.mul(crc, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(right));   
+				crc = (crc * 3) + right;   
                 
                 byte_idx = byte_idx + 2;
                 
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.JOINT_STEREO))) != 0 )
+				if((flags & Defines.JOINT_STEREO) != 0)
                 {
                     right += ((left -= right) >> 1);
                 }
@@ -810,8 +800,7 @@ class PackUtils
         }
 
         /////////////////// handle the lossy/hybrid mono mode /////////////////////
-        else if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) != 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) != 0 ) )
+		else if (((flags & Defines.HYBRID_FLAG) != 0) && (flags & Defines.FALSE_STEREO_OR_MONO_FLAG) != 0)
         {
             bptr = buffer;
             for (internalCounter in 0...sample_count)
@@ -826,17 +815,16 @@ class PackUtils
                 }
 
                 code = bptr[byte_idx];
-                crc2 = haxe.Int32.add(haxe.Int32.mul(crc2, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(code));
+				crc2 = (crc2 * 3) + code;
                 byte_idx++;
 
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_SHAPE))) != 0 )
+				if((flags & Defines.HYBRID_SHAPE) != 0 )
                 {
                     wps.dc.shaping_acc[0] += wps.dc.shaping_delta[0];
                     var shaping_weight:Int= (wps.dc.shaping_acc[0] ) >> 16;
                     temp = -apply_weight(shaping_weight, wps.dc.error[0]);
 
-                    if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.NEW_SHAPING))) != 0 ) && (shaping_weight < 0) &&
-                            (temp != 0))
+					if((flags & Defines.NEW_SHAPING) != 0 && (shaping_weight < 0) && (temp != 0))
                     {
                         if (temp == wps.dc.error[0])
                         {
@@ -915,9 +903,9 @@ class PackUtils
                 wps.dc.error[0] += code;
                 m = (m + 1) & (Defines.MAX_TERM - 1);
 
-                crc = haxe.Int32.add(haxe.Int32.mul(crc, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(code));
-                if(haxe.Int32.compare(crc, crc2) != 0 )
-                {
+				crc = (crc * 3) + code;
+				if (crc != crc2)
+				{
                     lossy = Defines.TRUE;
                 }
                 
@@ -928,8 +916,7 @@ class PackUtils
         }
 
         /////////////////// handle the lossy/hybrid stereo mode ///////////////////
-        else if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_FLAG))) != 0 ) && 
-            (haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, Defines.FALSE_STEREO_OR_MONO_FLAG )) == 0 ) )
+		else if (((flags & Defines.HYBRID_FLAG) != 0) && ((flags & (Defines.FALSE_STEREO_OR_MONO_FLAG)) == 0)) 
         {
             bptr = buffer;
             for (internalCounter in 0...sample_count)
@@ -948,18 +935,17 @@ class PackUtils
                 left = bptr[byte_idx];
                 byte_idx++;
                 right = bptr[byte_idx];
-                crc2 = haxe.Int32.add(haxe.Int32.mul(haxe.Int32.add(haxe.Int32.mul(crc2, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(left)),haxe.Int32.ofInt(3)),haxe.Int32.ofInt(right));
+				crc2 = (((crc2 * 3) + left) * 3) + right;
                 byte_idx++;
 
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.HYBRID_SHAPE))) != 0 )
-                {
+				if ((flags & Defines.HYBRID_SHAPE) != 0) 
+				{
                     wps.dc.shaping_acc[0] += wps.dc.shaping_delta[0];
                     shaping_weight = (wps.dc.shaping_acc[0]) >> 16;
                     temp = -apply_weight(shaping_weight, wps.dc.error[0]);
 
-                    if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.NEW_SHAPING))) != 0 ) && (shaping_weight < 0) &&
-                            (temp != 0))
-                    {
+					if (((flags & Defines.NEW_SHAPING) != 0) && (shaping_weight < 0) && (temp != 0)) 
+					{
                         if (temp == wps.dc.error[0])
                         {
                             temp = (temp < 0) ? (temp + 1) : (temp - 1);
@@ -976,8 +962,7 @@ class PackUtils
                     shaping_weight = (wps.dc.shaping_acc[1]) >> 16;
                     temp = -apply_weight(shaping_weight, wps.dc.error[1]);
 
-                    if((haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.NEW_SHAPING))) != 0 ) && (shaping_weight < 0) &&
-                            (temp != 0))
+					if (((flags & Defines.NEW_SHAPING) != 0) && (shaping_weight < 0) && (temp != 0))
                     {
                         if (temp == wps.dc.error[1])
                         {
@@ -993,10 +978,11 @@ class PackUtils
                     }
                 }
 
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.JOINT_STEREO))) != 0 )
-                {
-                    right += ((left -= right) >> 1);
-                }
+				if ((flags & Defines.JOINT_STEREO) != 0) 
+				{
+					left -= right;
+					right += (left >> 1);
+				}
 
                 dpp_idx = 0;
 
@@ -1118,21 +1104,22 @@ class PackUtils
 
                     dpp_idx--;
                 }
-
-                if(haxe.Int32.compare(zeroCheck, haxe.Int32.and(flags, haxe.Int32.ofInt(Defines.JOINT_STEREO))) != 0 )
-                {
-                    left += (right -= (left >> 1));
-                }
+				
+				if ((flags & Defines.JOINT_STEREO) != 0) 
+				{
+					right -= (left >> 1);
+					left += right;
+				}
 
                 wps.dc.error[0] += left;
                 wps.dc.error[1] += right;
                 m = (m + 1) & (Defines.MAX_TERM - 1);
-
-                crc = haxe.Int32.add(haxe.Int32.mul(haxe.Int32.add(haxe.Int32.mul(crc, haxe.Int32.ofInt(3)),  haxe.Int32.ofInt(left)),haxe.Int32.ofInt(3)),haxe.Int32.ofInt(right));
-                if(haxe.Int32.compare(crc, crc2) != 0 )
-                {
-                    lossy = Defines.TRUE;
-                }
+				
+				crc = (((crc * 3) + left) * 3) + right;
+				if (crc != crc2) 
+				{
+					lossy = Defines.TRUE;
+				}
                 
                 i++;
             }
@@ -1152,10 +1139,10 @@ class PackUtils
         wps.blockbuff[22] = ((block_samples >>> 16));
         wps.blockbuff[23] = ((block_samples >>> 24));
 
-        wps.blockbuff[28] = haxe.Int32.toInt(haxe.Int32.and(crc,haxe.Int32.ofInt(0xFF)));
-        wps.blockbuff[29] = haxe.Int32.toInt(haxe.Int32.and(haxe.Int32.shr(crc,8),haxe.Int32.ofInt(0xFF)));
-        wps.blockbuff[30] = haxe.Int32.toInt(haxe.Int32.and(haxe.Int32.shr(crc,16),haxe.Int32.ofInt(0xFF)));
-        wps.blockbuff[31] = haxe.Int32.toInt(haxe.Int32.and(haxe.Int32.shr(crc,24),haxe.Int32.ofInt(0xFF)));
+		wps.blockbuff[28] = crc & 0xFF;
+        wps.blockbuff[29] = (crc >> 8) & 0xFF;
+        wps.blockbuff[30] = (crc >> 16) & 0xFF;
+        wps.blockbuff[31] = (crc >> 24) & 0xFF;
 
         if (wpc.wvc_flag != 0)
         {
@@ -1171,10 +1158,10 @@ class PackUtils
             wps.block2buff[22] = ((block_samples >>> 16));
             wps.block2buff[23] = ((block_samples >>> 24));
 
-            wps.block2buff[28] = haxe.Int32.toInt(haxe.Int32.and(crc2,haxe.Int32.ofInt(0xFF)));
-            wps.block2buff[29] = haxe.Int32.toInt(haxe.Int32.and(haxe.Int32.shr(crc2,8),haxe.Int32.ofInt(0xFF)));
-            wps.block2buff[30] = haxe.Int32.toInt(haxe.Int32.and(haxe.Int32.shr(crc2,16),haxe.Int32.ofInt(0xFF)));
-            wps.block2buff[31] = haxe.Int32.toInt(haxe.Int32.and(haxe.Int32.shr(crc2,24),haxe.Int32.ofInt(0xFF)));
+            wps.block2buff[28] = crc2 & 0xFF;
+            wps.block2buff[29] = (crc2 >> 8) & 0xFF;
+            wps.block2buff[30] = (crc2 >> 16) & 0xFF;
+            wps.block2buff[31] = (crc2 >> 24) & 0xFF;
 
         }
 
