@@ -79,6 +79,17 @@
 			config.bits_per_sample = 16;
 			config.num_channels = 1;    // Flash records in mono from microphone
 			config.sample_rate = 8000;  // make sure to change the default value for rate above also
+			if (rate==44){
+				config.sample_rate = 44100;
+			}else if (rate==22){
+				config.sample_rate = 22050;
+			}else if (rate==11){
+				config.sample_rate = 11025;
+			}else if (rate==8){
+				config.sample_rate = 8000;
+			}else if (rate==5){
+				config.sample_rate = 5512;
+			}
 			
 			/* these set the bitrate for lossy encoding */
 			config.flags = (config.flags | Defines.CONFIG_HYBRID_FLAG);
